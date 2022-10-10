@@ -1,4 +1,14 @@
 <div class="container">
-    <div class="item board"></div>
+    <div class="item board">
+        <div class="sss" *ngFor="let i of iter; let ix = index">
+            <div *ngIf="getWall(ix)==0">
+                <img class="walls" src="../../assets/wall.jfif">
+            </div>
+            <!-- <p>d</p> -->
+        
+      
+          </div>
+          
+    </div>
     <div class="item scrboard"></div>
 </div>
