@@ -8,7 +8,7 @@
     align-items: center;
     align-content: flex-start;
     justify-content: flex-start;
-    column-gap: 300px;
+    column-gap: 10px;
    
 }
 .board{
@@ -24,22 +24,72 @@
   }
 
   .sss {
+    max-width: 55px;
+    max-height: 55px;
     justify-content: center;
     align-items: center;
     display: flex;
     font-family: Arial;
     font-size: 3rem;
     font-weight: bold;
-    background: white;
+    /* background: white; */
+    background-size: 100% ;  
+    background-size: cover;  
+    background-image:url("../../assets/grass.jpg");
   }
 .scrboard{
     background-color: rgb(207, 207, 120);
     width: 200px;
     height: 200px;
 }
+.mind{
+  background-color: rgb(207, 207, 120);
+  width: 200px;
+  height: 600px;
+}
 .walls{
     max-height: 55px;
     max-width: 55px;
     display: flex;
     align-items: center;
+    position: relative;
+    
+}
+.stuffC{
+  max-width: 85px;
+  max-height: 85px;
+  overflow: hidden;
+}
+.char {
+  width: calc(55px*30px);
+  height: 80px;
+  right: 24%;
+  top: 2%;
+  align-items:baseline;
+  position: relative;
+  animation: moveSpritesheet 1s steps(30) infinite;
+}
+@keyframes moveSpritesheet {
+  from {
+     transform: translate3d(0px,0,0)
+  }
+  to {
+     transform: translate3d(-100%,0,0)
+  }
+}
+/* .char img{
+  width: inherit;
+  height: inherit;
+} */
+.stuff{
+  max-width: 55px;
+  max-height: 55px;
+  display:flex;
+}
+.wumpus{
+  max-width: 55px;
+  max-height: 55px;
+  align-items: center;
+  align-content: center;
+
 }
