@@ -43,9 +43,12 @@
     height: 200px;
 }
 .mind{
-  background-color: rgb(207, 207, 120);
+  background-color: rgb(255, 255, 255);
   width: 200px;
   height: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .walls{
     max-height: 55px;
@@ -92,4 +95,30 @@
   align-items: center;
   align-content: center;
 
+}
+.itembtnbg1{
+  cursor: default;
+  display: flex;
+  background-color: #00539C;
+  width: 100px;
+  height: 32px;
+  border-radius: 5px;
+  border: solid;
+  border-color: #CCF381;
+  border-width:  5px 9px 5px 9px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+
+}
+.txt{
+  font-family: 'Roboto', sans-serif;
+  font-size: 32px;
+  color: #FDF6E4;
+}
+.txt1{
+  font-family: 'Roboto', sans-serif;
+  font-size: 30px;
+  color: #000000;
 }

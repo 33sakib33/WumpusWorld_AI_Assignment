@@ -15,6 +15,9 @@
             <div class="stuff" *ngIf="getStuff(ix)==1">
                 <img class="wumpus" src="../../assets/wumps.webp">
             </div>
+            <div class="stuff" *ngIf="getStuff(ix)==2">
+                <img class="wumpus" src="../../assets/hole.png">
+            </div>
             
             <!-- <p>d</p> -->
         
@@ -23,7 +26,10 @@
           
     </div>
     <div class="item mind">
-
+        <div class="itembtnbg1"><div class="txt">Mind</div></div>
+        <div class="txt1">Attack: {{attack}}</div>
+        <div class="txt1">Coin: {{coin}}</div>
+        <div class="txt1">Score: {{score}}</div>
     </div>
     <div class="item board">
         <div class="sss" *ngFor="let i of iter; let ix = index">
@@ -36,6 +42,9 @@
             </div>
             <div class="stuff" *ngIf="getStuff2(ix)==1">
                 <img class="wumpus" src="../../assets/wumps.webp">
+            </div>
+            <div class="stuff" *ngIf="getStuff2(ix)==2">
+                <img class="wumpus" src="../../assets/hole.png">
             </div>
             
             <!-- <p>d</p> -->

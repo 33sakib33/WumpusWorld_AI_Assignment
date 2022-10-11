@@ -6,6 +6,7 @@ import { Board } from './board';
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.css']
 })
+// 1: wumpus, 2:hole, 3:coin, 4:smell. 5: wind, 9: character
 export class BoardComponent implements OnInit, AfterViewInit {
 
   constructor(private elementRef: ElementRef) {
@@ -16,11 +17,20 @@ export class BoardComponent implements OnInit, AfterViewInit {
 		}
     this.boardMatrixStuff[this.currX][this.currY]=9;
     this.boardMatrixStuff[5][5]=1;
+    this.boardMatrixStuff[3][7]=2;
     this.boardMatrixWall[5][5]=1;
    }
+  knowledgeBase:any[]=[];
+  attack:any=1;
+  coin:any=0;
+  score:any=0;
+  moveX:any[]=[0,1,-1,0];
+  moveY:any[]=[1,0,0,-1];
   board : Board = new Board(10);
   boardMatrixStuff : any[][] = []; 
   boardMatrixWall : any[][] = []; 
+  boardMatrixWind : any[][] = []; 
+  boardMatrixSmell : any[][] = []; 
   iter: any = Array(100);
   key :any =null;
   currX: any=0;
@@ -140,6 +150,30 @@ export class BoardComponent implements OnInit, AfterViewInit {
   }
   processMove():void{
 
+  }
+  processAdjacent():void{
+    for(let i=0;i<10;i++){
+      for(let j=0;j<10;j++){
+        
+        this.updateAdjacent(i,j,this.boardMatrixStuff[i][j]);
+        
+      }
+    }
+  }
+  updateAdjacent(x:any, y:any,type:any):void{
+    for(let i=0;i<4;i++){
+      let newX=x+this.moveX[i];
+      let newY=y+this.moveY[i];
+      if(Math.min(newX,newY)>=0 && newX<10 && newY<10){
+        if(type==1){
+          this.boardMatrixSmell[newX][newY]+=1;
+        }
+        if(type==2){
+          this.boardMatrixWind[newX][newY]+=1;
+        }
+      }
+    }
+    
   }
 }
 
