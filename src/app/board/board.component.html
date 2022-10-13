@@ -26,6 +26,12 @@
             <div class="stuff" *ngIf="getFeeling(ix)==3">
                 <div class="wumpus2">Breeze + Smell</div>
             </div>
+            <!-- <div class="stuff" *ngIf="getStuff(ix)==3">
+                <div class="wumpus2">Coin</div>
+            </div> -->
+            <div class="stuff" *ngIf="getStuff(ix)==3">
+                <img class="wumpus" src="../../assets/coin.png">
+            </div>
             
             
             <!-- <p>d</p> -->
@@ -36,9 +42,17 @@
     </div>
     <div class="item mind">
         <div class="itembtnbg1"><div class="txt">Mind</div></div>
-        <div class="txt1">Attack: {{attack}}</div>
         <div class="txt1">Coin: {{coin}}</div>
         <div class="txt1">Score: {{score}}</div>
+        <div class="txt1">Current: {{currX}} {{currY}}</div>
+
+        <div class="dd" *ngFor="let idx of knowledgeBase; let ix1 = index">
+            <div class="sd">(x,y)=({{knowledgeBase[ix1].Second.First}} 
+                {{knowledgeBase[ix1].Second.Second}})
+                risk= {{knowledgeBase[ix1].First.First}}
+                distance= {{knowledgeBase[ix1].First.Second}}
+            </div>
+        </div>
     </div>
     <div class="item board">
         <div class="sss" *ngFor="let i of iter; let ix = index">
@@ -63,7 +77,12 @@
             <div class="stuff" *ngIf="getFeeling2(ix)==3">
                 <div class="wumpus2">Breeze + Smell</div>
             </div>
-            
+            <!-- <div class="stuff" *ngIf="getStuff2(ix)==3">
+                <div class="wumpus2">Coin</div>
+            </div> -->
+            <div class="stuff" *ngIf="getStuff2(ix)==3">
+                <img class="wumpus" src="../../assets/coin.png">
+            </div>
             <!-- <p>d</p> -->
         
       

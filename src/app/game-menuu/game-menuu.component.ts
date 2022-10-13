@@ -9,6 +9,14 @@ import { Router } from '@angular/router';
 export class GameMenuuComponent implements OnInit,AfterViewInit {
 
   constructor(private elementRef: ElementRef,private router: Router) { }
+  boardMatrixStuff : any[][] = []; 
+  boardMatrixWall : any[][] = []; 
+  boardMatrixWind : any[][] = []; 
+  boardMatrixSmell : any[][] = [];
+  filepathstring: string="../../assets/map.txt";
+  getInputFile():void{
+    this.router.navigate(["custom"])
+  }
   doSomething():void{
     this.router.navigate(["board"]);
   }

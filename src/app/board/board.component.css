@@ -115,7 +115,7 @@
 .txt{
   font-family: 'Roboto', sans-serif;
   font-size: 32px;
-  color: #FDF6E4;
+  color: git #FDF6E4;
 }
 .txt1{
   font-family: 'Roboto', sans-serif;
@@ -125,4 +125,12 @@
 .wumpus2{
   font-size: 15px;
   color:rgb(207, 207, 120)
+}
+.dd{
+  max-width: 280px;
+  max-height: 30px; 
+  font-size: 10px;
+}
+.sd{
+
 }
