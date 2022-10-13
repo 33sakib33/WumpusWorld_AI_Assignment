@@ -1,5 +1,8 @@
 import { AfterContentInit, AfterViewInit, Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { Board } from './board';
+import { Pair } from './pair';
+declare var require: any
+var PriorityQueue = require('priorityqueuejs');
 
 @Component({
   selector: 'app-board',
@@ -14,29 +17,50 @@ export class BoardComponent implements OnInit, AfterViewInit {
 		for (var i = 0; i < 10; i++) {
 			this.boardMatrixStuff[i] = Array(10).fill(0);
       this.boardMatrixWall[i] = Array(10).fill(0);
+      this.boardMatrixSmell[i] = Array(10).fill(0);
+      this.boardMatrixWind[i] = Array(10).fill(0);
+      let noParent = new Pair()
+      noParent.First = -1
+      noParent.Second = -1
+      this.parent[i] = Array(10).fill(noParent);
 		}
     this.boardMatrixStuff[this.currX][this.currY]=9;
     this.boardMatrixStuff[5][5]=1;
     this.boardMatrixStuff[3][7]=2;
     this.boardMatrixWall[5][5]=1;
+    this.boardMatrixStuff[3][3]=3;
    }
+
+
+  compareNumbers = function(a : Pair, b : Pair) { 
+    if(a.First.First==b.First.First) {
+      return a.First.Second - b.First.Second;
+    }
+    return a.First.First - b.First.First; 
+  };
+  queue = new PriorityQueue(this.compareNumbers);
+
+  wumpus:any=1;
   knowledgeBase:any[]=[];
   attack:any=1;
   coin:any=0;
   score:any=0;
   moveX:any[]=[0,1,-1,0];
   moveY:any[]=[1,0,0,-1];
+  
   board : Board = new Board(10);
   boardMatrixStuff : any[][] = []; 
   boardMatrixWall : any[][] = []; 
   boardMatrixWind : any[][] = []; 
-  boardMatrixSmell : any[][] = []; 
+  boardMatrixSmell : any[][] = [];
+  parent : any[][] = []; 
   iter: any = Array(100);
   key :any =null;
   currX: any=0;
   currY: any=0;
   stateString:any="ArrowDown";
   charState:string="../../assets/character/downidle.png";
+  // coinPath:string="../../assets/character/coin.png";
   charStateList:any={"downIdle": "../../assets/character/downidle.png", 
   "leftIdle": "../../assets/character/leftidle.png",
   "upIdle": "../../assets/character/upidle.png",
@@ -56,10 +80,10 @@ export class BoardComponent implements OnInit, AfterViewInit {
     
     let retValue=this.boardMatrixWall[xPos][yPos];
     if(retValue==1){
-      console.log(retValue);
-      console.log("Index :  "+ idx);
-      console.log("X : "+ xPos);
-      console.log("Y : "+ yPos);
+      // console.log(retValue);
+      // console.log("Index :  "+ idx);
+      // console.log("X : "+ xPos);
+      // console.log("Y : "+ yPos);
     }
     
     return retValue;
@@ -73,10 +97,10 @@ export class BoardComponent implements OnInit, AfterViewInit {
     
     let retValue=this.boardMatrixStuff[xPos][yPos];
     if(retValue==1){
-      console.log(retValue);
-      console.log("Index :  "+ idx);
-      console.log("X : "+ xPos);
-      console.log("Y : "+ yPos);
+      // console.log(retValue);
+      // console.log("Index :  "+ idx);
+      // console.log("X : "+ xPos);
+      // console.log("Y : "+ yPos);
     }
     if(this.boardMatrixWall[xPos][yPos]!=0)return 0;
     return retValue;
@@ -90,10 +114,10 @@ export class BoardComponent implements OnInit, AfterViewInit {
     
     let retValue=this.boardMatrixStuff[xPos][yPos];
     if(retValue==1){
-      console.log(retValue);
-      console.log("Index :  "+ idx);
-      console.log("X : "+ xPos);
-      console.log("Y : "+ yPos);
+      // console.log(retValue);
+      // console.log("Index :  "+ idx);
+      // console.log("X : "+ xPos);
+      // console.log("Y : "+ yPos);
     }
     return retValue;
 
@@ -102,8 +126,17 @@ export class BoardComponent implements OnInit, AfterViewInit {
   @HostListener('window:keydown.ArrowRight', ['$event'])
   @HostListener('window:keydown.ArrowUp', ['$event'])
   @HostListener('window:keydown.ArrowDown', ['$event'])
+  @HostListener('window:keydown.Space',['$event'])
   handleKeyboardEvent(event: KeyboardEvent) { 
+    console.log(event.key);
     this.key = event.key;
+    if(this.key==" "){
+      this.useAttack();
+      console.log("herer");
+      console.log(    this.boardMatrixStuff[5][5]        );
+      console.log(this.stateString);
+      return;
+    }
     if(this.key!=this.stateString){
       this.stateString=this.key;
       if(this.key=="ArrowDown"){
@@ -128,21 +161,31 @@ export class BoardComponent implements OnInit, AfterViewInit {
          
       }
       if(this.key=="ArrowUp"){
-        if(this.currX>0)
+        if(this.currX>0){
           this.movePlayer(this.currX,this.currY,this.currX-1,this.currY);
           this.currX-=1;
+        }
       }
       if(this.key=="ArrowLeft"){
-        if(this.currY>0)
+        if(this.currY>0){
           this.movePlayer(this.currX,this.currY,this.currX,this.currY-1);
           this.currY-=1;
+        }
       }
       if(this.key=="ArrowRight"){
-        if(this.currY<9)
+        if(this.currY<9){
           this.movePlayer(this.currX,this.currY,this.currX,this.currY+1);
           this.currY+=1;
+        }
       }
+
+      let source = new Pair()
+      source.First = this.currX
+      source.Second = this.currY
+      this.bfs(source)
     }
+    console.log("pos: "+ this.currX);
+    console.log("pos: "+ this.currY);
   }
   movePlayer(x1:any,y1:any,x2:any,y2:any):void{
     this.boardMatrixStuff[x1][y1]=0;
@@ -175,5 +218,180 @@ export class BoardComponent implements OnInit, AfterViewInit {
     }
     
   }
+  useAttack():void{
+    if(this.stateString=="ArrowRight"){
+      for(let i=this.currY+1;i<10;i++){
+        if(this.boardMatrixStuff[this.currX][i]==1){
+          this.wumpus=0;
+          this.boardMatrixStuff[this.currX][i]=0;
+          this.cleanSmell(this.currX,i);
+        }
+      }
+    }
+
+    else if(this.stateString=="ArrowLeft"){
+      for(let i=this.currY-1;i>=0;i--){
+        if(this.boardMatrixStuff[this.currX][i]==1){
+          this.wumpus=0;
+          this.boardMatrixStuff[this.currX][i]=0;
+          this.cleanSmell(this.currX,i);
+
+        }
+      }
+    }
+
+    else if(this.stateString=="ArrowDown"){
+      for(let i=this.currX+1;i<10;i++){
+        if(this.boardMatrixStuff[i][this.currY]==1){
+          this.wumpus=0;
+          this.boardMatrixStuff[i][this.currY]=0;
+          this.cleanSmell(i,this.currY);
+
+        }
+      }
+    }
+
+    else if(this.stateString=="ArrowUp"){
+      for(let i=this.currX-1;i>=0;i--){
+        if(this.boardMatrixStuff[i][this.currY]==1){
+          this.wumpus=0;
+          this.boardMatrixStuff[i][this.currY]=0;
+          this.cleanSmell(i,this.currY);
+
+        }
+      }
+    }
+  }
+  cleanSmell(x:any, y:any):void{
+    for(let i=0;i<4;i++){
+      let newX=x+this.moveX[i];
+      let newY=y+this.moveY[i];
+      if(Math.min(newX,newY)>=0 && newX<10 && newY<10){
+        this.boardMatrixSmell[newX][newY]=this.boardMatrixSmell[newX][newY]-1;
+        console.log(this.boardMatrixSmell[newX][newY]);
+      }
+    }
+  }
+  
+  bfs(source : any){
+      let visited: boolean[][] = [];
+      //var size = this.board.getBoardSize();
+      var size = 10;
+      // Pre-populate array:
+      for(let i = 0; i < size; i++){
+        visited[i] = Array(size).fill(false);
+        this.parent[i].splice(0)
+        let noParent = new Pair()
+        noParent.First = -1
+        noParent.Second = -1
+        this.parent[i] = Array(10).fill(noParent);
+      }
+  
+       // Use an array as our queue representation:
+       let q: Pair[] = [];
+       let sourceX = source.First
+       let sourceY = source.Second
+       visited[sourceX][sourceY] = true;
+       
+       let source_cost = new Pair()
+       source_cost.First = source
+       source_cost.Second = 0
+       q.push(source_cost);
+  
+       while(q.length > 0){
+           const v = q.shift();
+           console.log(v?.First.First, v?.First.First)
+           for(let i=0; i<4; i++){
+                
+                let x = this.moveX[i]
+                let y = this.moveY[i]
+                let adjX = v?.First.First+x
+                let adjY = v?.First.Second+y
+                if(adjX>=10 || adjY>=10) continue
+                
+                this.parent[adjX][adjY] = v?.First
+                let newNode = new Pair()
+                newNode.First = adjX
+                newNode.Second = adjY
+                
+                let cost = v?.Second+1                
+                let risk_score = this.getScore(adjX, adjY)
+
+
+                let score_cost = new Pair()
+                score_cost.First = risk_score
+                score_cost.Second = cost
+
+                if(visited[adjX][adjY] == false){
+                    visited[adjX][adjY] = true;
+                    if(this.boardMatrixWall[adjX][adjY] == 0){
+                      console.log(adjX, adjY)
+                      let score_cost_vertex = new Pair()
+                      score_cost_vertex.First = score_cost
+                      score_cost_vertex.Second = newNode
+                      this.queue.enq(score_cost_vertex)
+                      continue
+                    }
+                    let toAdd = new Pair()
+                    toAdd.First = newNode
+                    toAdd.Second = cost
+                    q.push(toAdd);
+                }
+           }
+       }
+  }
+  
+  bestMove(): Pair{
+    return this.queue.deq();
+  }
+
+  getScore(x : number, y:number) : number{
+    // let score = 0
+    // for(let i=0; i<4; i++){
+    //   let adjX = x + this.moveX[i]
+    //   let adjY = y + this.moveY[i]
+    //   if(this.boardMatrixSmell[adjX][adjY]==1){
+    //     let count = 0
+    //     for(let j=0; j<4; j++){
+    //       let X = adjX + this.moveX[j]
+    //       let Y = adjY + this.moveY[j]
+    //       if(X==x && Y==y) continue
+    //       if(this.boardMatrixWall[X][Y]!=0) count += 1
+    //     }
+    //     if(count==3) score += 100
+    //     else score += 10
+    //   }
+
+    //   if(this.boardMatrixWind[adjX][adjY]==1){
+    //     let count = 0
+    //     for(let j=0; j<4; j++){
+    //       let X = adjX + this.moveX[j]
+    //       let Y = adjY + this.moveY[j]
+    //       if(X==x && Y==y) continue
+    //       if(this.boardMatrixWall[X][Y]!=0) count += 1
+    //     }
+    //     if(count==3) score += 100
+    //     else score += 10
+    //   }
+
+    // }
+    // return -score
+    return 100
+  }
+
+  travel(source : Pair, dest : Pair){
+    let path : Pair[] = []
+    let cur = dest
+    path.push(cur)
+    while(cur.First!=source.First && cur.Second!=source.Second){
+      cur = this.parent[cur.First][cur.Second]
+      path.push(cur)
+    }
+  }
 }
+
+
+
+
+
 

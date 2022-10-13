@@ -33,6 +33,7 @@ export class Board{
     public getBoardMatrix() : number[][]{
 		return this.boardMatrix;
 	}
+	
 
 
  
