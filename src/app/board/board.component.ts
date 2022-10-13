@@ -16,7 +16,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
     
 		for (var i = 0; i < 10; i++) {
 			this.boardMatrixStuff[i] = Array(10).fill(0);
-      this.boardMatrixWall[i] = Array(10).fill(0);
+      this.boardMatrixWall[i] = Array(10).fill(1);
       this.boardMatrixSmell[i] = Array(10).fill(0);
       this.boardMatrixWind[i] = Array(10).fill(0);
       let noParent = new Pair()
@@ -24,13 +24,23 @@ export class BoardComponent implements OnInit, AfterViewInit {
       noParent.Second = -1
       this.parent[i] = Array(10).fill(noParent);
 		}
-    this.boardMatrixStuff[this.currX][this.currY]=9;
-    this.boardMatrixStuff[5][5]=1;
-    this.boardMatrixStuff[3][7]=2;
-    this.boardMatrixWall[5][5]=1;
-    this.boardMatrixStuff[3][3]=3;
+    this.generate();
    }
 
+  generate():void{
+    
+    this.currX=Math.floor(Math.random()*10);
+    console.log(this.currX)
+    this.currY=Math.floor(Math.random()*10);
+    this.boardMatrixStuff[this.currX][this.currY]=9;
+    this.boardMatrixStuff[(this.currX+Math.floor(Math.random()*10))%10][(this.currX+Math.floor(Math.random()*10))%10]=1;
+    this.boardMatrixStuff[(this.currX+Math.floor(Math.random()*10))%10][(this.currX+Math.floor(Math.random()*10))%10]=2;
+    this.boardMatrixStuff[(this.currX+Math.floor(Math.random()*10))%10][(this.currX+Math.floor(Math.random()*10))%10]=2;
+    this.boardMatrixStuff[(this.currX+Math.floor(Math.random()*10))%10][(this.currX+Math.floor(Math.random()*10))%10]=2;
+    this.boardMatrixWall[this.currX][this.currY]=0;
+    this.processAdjacent();
+
+  }
 
   compareNumbers = function(a : Pair, b : Pair) { 
     if(a.First.First==b.First.First) {
@@ -38,6 +48,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
     }
     return a.First.First - b.First.First; 
   };
+
   queue = new PriorityQueue(this.compareNumbers);
 
   wumpus:any=1;
@@ -133,7 +144,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
     if(this.key==" "){
       this.useAttack();
       console.log("herer");
-      console.log(    this.boardMatrixStuff[5][5]        );
+      console.log( this.boardMatrixStuff[5][5]  );
       console.log(this.stateString);
       return;
     }
@@ -184,12 +195,25 @@ export class BoardComponent implements OnInit, AfterViewInit {
       source.Second = this.currY
       this.bfs(source)
     }
-    console.log("pos: "+ this.currX);
-    console.log("pos: "+ this.currY);
+    // console.log("pos: "+ this.currX);
+    // console.log("pos: "+ this.currY);
   }
   movePlayer(x1:any,y1:any,x2:any,y2:any):void{
     this.boardMatrixStuff[x1][y1]=0;
-    this.boardMatrixStuff[x2][y2]=9;
+    this.boardMatrixWall[x2][y2]=0;
+    if(this.boardMatrixStuff[x2][y2]==1){
+      this.boardMatrixStuff[x2][y2]=0;
+      this.currX=-1;
+      this.currY=-1;
+    }
+    else if(this.boardMatrixStuff[x2][y2]==2){
+      this.boardMatrixStuff[x2][y2]=0;
+      this.currX=-1;
+      this.currY=-1;
+    }
+    else{
+      this.boardMatrixStuff[x2][y2]=9;
+    }
   }
   processMove():void{
 
@@ -209,10 +233,10 @@ export class BoardComponent implements OnInit, AfterViewInit {
       let newY=y+this.moveY[i];
       if(Math.min(newX,newY)>=0 && newX<10 && newY<10){
         if(type==1){
-          this.boardMatrixSmell[newX][newY]+=1;
+          this.boardMatrixSmell[newX][newY]=1;
         }
         if(type==2){
-          this.boardMatrixWind[newX][newY]+=1;
+          this.boardMatrixWind[newX][newY]=1;
         }
       }
     }
@@ -268,7 +292,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
       let newY=y+this.moveY[i];
       if(Math.min(newX,newY)>=0 && newX<10 && newY<10){
         this.boardMatrixSmell[newX][newY]=this.boardMatrixSmell[newX][newY]-1;
-        console.log(this.boardMatrixSmell[newX][newY]);
+        //console.log(this.boardMatrixSmell[newX][newY]);
       }
     }
   }
@@ -324,7 +348,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
 
                 if(visited[adjX][adjY] == false){
                     visited[adjX][adjY] = true;
-                    if(this.boardMatrixWall[adjX][adjY] == 0){
+                    if(this.boardMatrixWall[adjX][adjY] == 1){
                       console.log(adjX, adjY)
                       let score_cost_vertex = new Pair()
                       score_cost_vertex.First = score_cost
@@ -388,6 +412,57 @@ export class BoardComponent implements OnInit, AfterViewInit {
       path.push(cur)
     }
   }
+
+  getFeeling(idx:number):number{
+    let xPos:number=Math.floor(idx/10);
+    let yPos:number =idx%10;
+  
+    
+    let smell=0;
+    smell=this.boardMatrixSmell[xPos][yPos];
+    let wind=0
+    wind=this.boardMatrixWind[xPos][yPos];
+    let total= wind+smell;
+    let retValue:number=0;
+    if(total==2){
+      retValue= 3;
+    }
+    else if(smell==1){
+      retValue=1;
+    }
+    else if(wind==1){
+      retValue= 2;
+    }
+    if(this.boardMatrixWall[xPos][yPos]==1)return 0;
+    if(this.boardMatrixStuff[xPos][yPos]==9)return 0;
+    return retValue;
+  }
+  getFeeling2(idx:number):number{
+    let xPos:number=Math.floor(idx/10);
+    let yPos:number =idx%10;
+  
+    
+    let smell=0;
+    smell=this.boardMatrixSmell[xPos][yPos];
+    let wind=0
+    wind=this.boardMatrixWind[xPos][yPos];
+    let total= wind+smell;
+    let retValue:number=0;
+    if(total==2){
+      retValue= 3;
+    }
+    else if(smell==1){
+      retValue=1;
+    }
+    else if(wind==1){
+      retValue= 2;
+    }
+    if(this.boardMatrixStuff[xPos][yPos]==9)return 0;
+
+    return retValue;
+    
+  }
+
 }
 
 

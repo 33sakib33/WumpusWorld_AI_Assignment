@@ -18,6 +18,15 @@
             <div class="stuff" *ngIf="getStuff(ix)==2">
                 <img class="wumpus" src="../../assets/hole.png">
             </div>
+            <div class="stuff" *ngIf="getFeeling(ix)==1">
+                <div class="wumpus2">Smell</div>
+            </div>
+            <div class="stuff" *ngIf="getFeeling(ix)==2">
+                <div class="wumpus2">Breeze</div>            </div>
+            <div class="stuff" *ngIf="getFeeling(ix)==3">
+                <div class="wumpus2">Breeze + Smell</div>
+            </div>
+            
             
             <!-- <p>d</p> -->
         
@@ -45,6 +54,14 @@
             </div>
             <div class="stuff" *ngIf="getStuff2(ix)==2">
                 <img class="wumpus" src="../../assets/hole.png">
+            </div>
+            <div class="stuff" *ngIf="getFeeling2(ix)==1">
+                <div class="wumpus2">Smell</div>
+            </div>
+            <div class="stuff" *ngIf="getFeeling2(ix)==2">
+                <div class="wumpus2">Breeze</div></div>
+            <div class="stuff" *ngIf="getFeeling2(ix)==3">
+                <div class="wumpus2">Breeze + Smell</div>
             </div>
             
             <!-- <p>d</p> -->
